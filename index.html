@@ -48,7 +48,160 @@ but, hey, <a href="hotlinemiami.com">it's not like I am going to come after you 
 <a name="assignment-3-doin-stuff-with-motors-and-servos--shift-registers" class="anchor" href="#assignment-3-doin-stuff-with-motors-and-servos--shift-registers"><span class="octicon octicon-link"></span></a>Assignment 3: Doin' stuff with motors and servos / shift registers</h3>
 
 <p>For this assignment, we played around with the arduino and motors and shift registers (as the title
-would suggest). Following the <a href="http://oomlout.com/a/products/ardx/circ-03/">Oomlaut ARDX Circ-03 tutorial</a> I wound up with this beautiful disaster:</p>
+would suggest). </p>
+
+<p><strong><em>Part 1: DC Motor</em></strong></p>
+
+<p>Following the <a href="http://oomlout.com/a/products/ardx/circ-03/">Oomlaut ARDX Circ-03 tutorial</a> for DC motors I wound up with this beautiful disaster:</p>
+
+<p><img src="https://raw.github.com/trevortomesh/InteractiveHardware/fab20d3b0d0583027e5e4cb0d14532252c6e9780/assignments/a3/20140130_221143.jpg" alt=""></p>
+
+<p>This set-up is very simple with with very simple code (once again, taken from the <a href="http://oomlout.com/a/products/ardx/circ-03/">CIRC-03 tutorial</a>: </p>
+
+<div class="highlight highlight-C++"><pre><span class="cm">/*     ———————————————————–</span>
+<span class="cm">*     |  Arduino Experimentation Kit Example Code               |</span>
+<span class="cm">*     |  CIRC-03 .: Spin Motor Spin :. (Transistor and Motor)   |</span>
+<span class="cm">*     ———————————————————–</span>
+<span class="cm">*</span>
+<span class="cm">* The Arduinos pins are great for driving LEDs however if you hook</span>
+<span class="cm">* up something that requires more power you will quickly break them.</span>
+<span class="cm">* To control bigger items we need the help of a transistor.</span>
+<span class="cm">* Here we will use a transistor to control a small toy motor</span>
+<span class="cm">*</span>
+<span class="cm">* http://tinyurl.com/d4wht7</span>
+<span class="cm">*</span>
+<span class="cm">*/</span>
+
+<span class="kt">int</span> <span class="n">motorPin</span> <span class="o">=</span> <span class="mi">9</span><span class="p">;</span>  <span class="c1">// define the pin the motor is connected to</span>
+                   <span class="c1">// (if you use pin 9,10,11 or 3you can also control speed)</span>
+
+<span class="cm">/*</span>
+<span class="cm">* setup() – this function runs once when you turn your Arduino on</span>
+<span class="cm">* We set the motors pin to be an output (turning the pin high (+5v) or low (ground) (-))</span>
+<span class="cm">* rather than an input (checking whether a pin is high or low)</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="n">pinMode</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">* loop() – this function will start after setup finishes and then repeat</span>
+<span class="cm">* we call a function called motorOnThenOff()</span>
+<span class="cm">*/</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span>                     <span class="c1">// run over and over again</span>
+<span class="p">{</span>
+<span class="n">motorOnThenOff</span><span class="p">();</span>
+<span class="c1">//motorOnThenOffWithSpeed();</span>
+<span class="c1">//motorAcceleration();</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">* motorOnThenOff() – turns motor on then off</span>
+<span class="cm">* (notice this code is identical to the code we used for</span>
+<span class="cm">* the blinking LED)</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">motorOnThenOff</span><span class="p">(){</span>
+  <span class="kt">int</span> <span class="n">onTime</span> <span class="o">=</span> <span class="mi">2500</span><span class="p">;</span>  <span class="c1">//the number of milliseconds for the motor to turn on for</span>
+  <span class="kt">int</span> <span class="n">offTime</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> <span class="c1">//the number of milliseconds for the motor to turn off for</span>
+
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span> <span class="c1">// turns the motor On</span>
+  <span class="n">delay</span><span class="p">(</span><span class="n">onTime</span><span class="p">);</span>                <span class="c1">// waits for onTime milliseconds</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>  <span class="c1">// turns the motor Off</span>
+  <span class="n">delay</span><span class="p">(</span><span class="n">offTime</span><span class="p">);</span>               <span class="c1">// waits for offTime milliseconds</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">* motorOnThenOffWithSpeed() – turns motor on then off but uses speed values as well</span>
+<span class="cm">* (notice this code is identical to the code we used for</span>
+<span class="cm">* the blinking LED)</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">motorOnThenOffWithSpeed</span><span class="p">(){</span>
+
+  <span class="kt">int</span> <span class="n">onSpeed</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>  <span class="c1">// a number between 0 (stopped) and 255 (full speed)</span>
+  <span class="kt">int</span> <span class="n">onTime</span> <span class="o">=</span> <span class="mi">2500</span><span class="p">;</span>  <span class="c1">//the number of milliseconds for the motor to turn on for</span>
+
+  <span class="kt">int</span> <span class="n">offSpeed</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>  <span class="c1">// a number between 0 (stopped) and 255 (full speed)</span>
+  <span class="kt">int</span> <span class="n">offTime</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> <span class="c1">//the number of milliseconds for the motor to turn off for</span>
+
+  <span class="n">analogWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">onSpeed</span><span class="p">);</span>   <span class="c1">// turns the motor On</span>
+  <span class="n">delay</span><span class="p">(</span><span class="n">onTime</span><span class="p">);</span>                    <span class="c1">// waits for onTime milliseconds</span>
+  <span class="n">analogWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">offSpeed</span><span class="p">);</span>  <span class="c1">// turns the motor Off</span>
+  <span class="n">delay</span><span class="p">(</span><span class="n">offTime</span><span class="p">);</span>                   <span class="c1">// waits for offTime milliseconds</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">* motorAcceleration() – accelerates the motor to full speed then</span>
+<span class="cm">* back down to zero</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">motorAcceleration</span><span class="p">(){</span>
+  <span class="kt">int</span> <span class="n">delayTime</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span> <span class="c1">//milliseconds between each speed step</span>
+
+  <span class="c1">//Accelerates the motor</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">256</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span> <span class="c1">//goes through each speed from 0 to 255</span>
+    <span class="n">analogWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>   <span class="c1">//sets the new speed</span>
+    <span class="n">delay</span><span class="p">(</span><span class="n">delayTime</span><span class="p">);</span>           <span class="c1">// waits for delayTime milliseconds</span>
+  <span class="p">}</span>
+
+  <span class="c1">//Decelerates the motor</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">){</span> <span class="c1">//goes through each speed from 255 to 0</span>
+    <span class="n">analogWrite</span><span class="p">(</span><span class="n">motorPin</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span>   <span class="c1">//sets the new speed</span>
+    <span class="n">delay</span><span class="p">(</span><span class="n">delayTime</span><span class="p">);</span>           <span class="c1">// waits for delayTime milliseconds</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>In a nut-shell, this code pulses a DC Motor that is connected to pin 9. It is nearly exactly like the "blink code" except with an analogWrite. </p>
+
+<p>I wanted to do something a little more interesting with this circuit, so I removed the resistor and replaced it with a photo-resistor:
+<img src="https://raw.github.com/trevortomesh/InteractiveHardware/fab20d3b0d0583027e5e4cb0d14532252c6e9780/assignments/a3/20140130_221254.jpg" alt=""></p>
+
+<p>It may not look like much... because it really isn't, but there's some rather entertaining implications of replacing the regular resistor with a photo-resistor. When we normally think about "autonomous agents" that have the ability to "sense" their environment -- we tend to think of a three step process: </p>
+
+<p>Sensing --&gt; Processing --&gt; Acting</p>
+
+<p>That is, an agent senses a stimuli in its environment, makes a decision as to how to react and then acts upon it (or not, depending upon what sort of decision it makes). Had I wired the photo-resistor to an analog port and instructed the MCU to rotate the motor according to how much light was detected, that would be according to the sense-think-act model. However, I did not. Rather, I inserted the resistor directly into the circuit so that the motor speed would change as a result of the resistance of the photo-resistor! There is no "processing involved". This sort of machine is known as a <a href="http://en.wikipedia.org/wiki/Braitenberg_vehicle">Braitenberg Vehicle</a>. I could go on for hours about behavior-based robotics and how Braitenberg vehicles are awesome and what implication they have on the nature of the universe -- but will save that for another time. </p>
+
+<p><strong><em>Part 2: Servo</em></strong></p>
+
+<p>For part 2, I followed <a href="http://oomlout.com/a/products/ardx/circ-04/">CIRC-04</a> of the ARDX kit to build a little servo-circuit that runs a boring little program: </p>
+
+<div class="highlight highlight-C++"><pre><span class="c1">// Sweep</span>
+<span class="c1">// by BARRAGAN</span>
+
+<span class="cp">#include &lt;Servo.h&gt;</span>
+
+<span class="n">Servo</span> <span class="n">myservo</span><span class="p">;</span>  <span class="c1">// create servo object to control a servo</span>
+                <span class="c1">// a maximum of eight servo objects can be created</span>
+
+<span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>    <span class="c1">// variable to store the servo position</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">myservo</span><span class="p">.</span><span class="n">attach</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>  <span class="c1">// attaches the servo on pin 9 to the servo object</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">;</span> <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1">// goes from 0 degrees to 180 degrees</span>
+  <span class="p">{</span>                                  <span class="c1">// in steps of 1 degree</span>
+    <span class="n">myservo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>              <span class="c1">// tell servo to go to position in variable 'pos'</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>                       <span class="c1">// waits 15ms for the servo to reach the position</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">pos</span> <span class="o">=</span> <span class="mi">180</span><span class="p">;</span> <span class="n">pos</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">;</span> <span class="n">pos</span><span class="o">-=</span><span class="mi">1</span><span class="p">)</span>     <span class="c1">// goes from 180 degrees to 0 degrees</span>
+  <span class="p">{</span>                                
+    <span class="n">myservo</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>              <span class="c1">// tell servo to go to position in variable ‘pos’</span>
+    <span class="n">delay</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span>                       <span class="c1">// waits 15ms for the servo to reach the position</span>
+  <span class="p">}</span>
+<span class="p">}</span> 
+</pre></div>
+
+<p>The set-up: </p>
+
+<p><img src="https://raw.github.com/trevortomesh/InteractiveHardware/fab20d3b0d0583027e5e4cb0d14532252c6e9780/assignments/a3/20140130_222729.jpg" alt=""></p>
+
+<p>Not too much interesting here. The code steps the servo through 180 degrees in one direction and then returns. At first I could not think of much interesting to do with this that would not suck up my entire week and get me in trouble with the Missus for not feeding the dog (I have an adorable chihuahua who would not look quite so adorable emaciated). However, I thought back to a project that I did as an undergraduate where I drove a physical pendulum with the oscillating signal from a simulated <a href="http://adsabs.harvard.edu/abs/2010APS..MAR.K1013T">squid-giant axon</a> (the result of which will forever be pejoratively known as "robo-squid" at the University of Wisconsin - River Falls).</p>
       </section>
     </div>
 

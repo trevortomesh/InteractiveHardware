@@ -381,7 +381,187 @@ would suggest). </p>
 <span class="p">}</span>
 </pre></div>
 
-<p>So, this program just counts to 128 in binary using red LEDs. </p>
+<p>So, this program just counts to 128 in binary using red LEDs. Certainly, we can do something more interesting with it!</p>
+
+<div class="highlight highlight-C++"><pre><span class="cm">/*     ---------------------------------------------------------</span>
+<span class="cm"> *     |  Arduino Experimentation Kit Example Code             |</span>
+<span class="cm"> *     |  CIRC-05 .: 8 More LEDs :. (74HC595 Shift Register)   |</span>
+<span class="cm"> *     ---------------------------------------------------------</span>
+<span class="cm"> * </span>
+<span class="cm"> * We have already controlled 8 LEDs however this does it in a slightly</span>
+<span class="cm"> * different manner. Rather than using 8 pins we will use just three</span>
+<span class="cm"> * and an additional chip.</span>
+<span class="cm"> *</span>
+<span class="cm"> *</span>
+<span class="cm"> */</span>
+
+
+<span class="c1">//Pin Definitions</span>
+<span class="c1">//Pin Definitions</span>
+<span class="c1">//The 74HC595 uses a serial communication </span>
+<span class="c1">//link which has three pins</span>
+<span class="kt">int</span> <span class="n">data</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> 
+<span class="kt">int</span> <span class="n">clock</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">latch</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+
+<span class="c1">//Used for single LED manipulation</span>
+<span class="kt">int</span> <span class="n">ledState</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">ON</span> <span class="o">=</span> <span class="n">HIGH</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span> <span class="n">OFF</span> <span class="o">=</span> <span class="n">LOW</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">stateArray</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span> 
+<span class="kt">int</span> <span class="n">newStateArray</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="cm">/*</span>
+<span class="cm"> * setup() - this function runs once when you turn your Arduino on</span>
+<span class="cm"> * We set the three control pins to outputs</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">clock</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>  
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">latch</span><span class="p">,</span> <span class="n">OUTPUT</span><span class="p">);</span>  
+<span class="p">}</span>
+
+
+
+<span class="cm">/*</span>
+<span class="cm"> * loop() - this function will start after setup finishes and then repeat</span>
+<span class="cm"> * we set which LEDs we want on then call a routine which sends the states to the 74HC595</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span>                     <span class="c1">// run over and over again</span>
+<span class="p">{</span>
+
+
+ <span class="c1">// changeLED(1,1);</span>
+
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">changeLED</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>    
+  <span class="p">}</span>
+
+
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+
+
+
+    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+        <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+       <span class="c1">// changeLED(i,stateArray[i]);</span>
+      <span class="p">}</span>
+
+     <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+        <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+       <span class="c1">// changeLED(i,stateArray[i]);</span>
+      <span class="p">}</span>
+
+     <span class="k">else</span><span class="p">{</span>
+      <span class="n">changeLED</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+      <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="mi">7</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+        <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+     <span class="c1">//   changeLED(i,stateArray[i]);</span>
+      <span class="p">}</span>
+
+     <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+        <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+     <span class="c1">//   changeLED(i,stateArray[i]);</span>
+      <span class="p">}</span>
+
+     <span class="k">else</span><span class="p">{</span>
+      <span class="n">changeLED</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+      <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+
+  <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">7</span><span class="p">){</span>    
+
+    <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="o">--</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+      <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//changeLED(i,stateArray[i]);</span>
+
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="o">--</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+      <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//  changeLED(i,stateArray[i]);}</span>
+  <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span>
+      <span class="n">changeLED</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+      <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+
+  <span class="p">}</span>
+
+
+    <span class="n">delay</span><span class="p">(</span><span class="mi">1000</span><span class="p">);</span>
+
+      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">stateArray</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">newStateArray</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> 
+  <span class="p">}</span> 
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+
+<span class="cm">/*</span>
+<span class="cm"> * updateLEDs() - sends the LED states set in ledStates to the 74HC595</span>
+<span class="cm"> * sequence</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="nf">updateLEDs</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">){</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">latch</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>     <span class="c1">//Pulls the chips latch low</span>
+  <span class="n">shiftOut</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">clock</span><span class="p">,</span> <span class="n">MSBFIRST</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span> <span class="c1">//Shifts out the 8 bits to the shift register</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">latch</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>   <span class="c1">//Pulls the latch high displaying the data</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * updateLEDsLong() - sends the LED states set in ledStates to the 74HC595</span>
+<span class="cm"> * sequence. Same as updateLEDs except the shifting out is done in software</span>
+<span class="cm"> * so you can see what is happening.</span>
+<span class="cm"> */</span> 
+<span class="kt">void</span> <span class="nf">updateLEDsLong</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">){</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">latch</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>    <span class="c1">//Pulls the chips latch low</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>  <span class="c1">//Will repeat 8 times (once for each bit)</span>
+  <span class="kt">int</span> <span class="n">bit</span> <span class="o">=</span> <span class="n">value</span> <span class="o">&amp;</span> <span class="n">B10000000</span><span class="p">;</span> <span class="c1">//We use a "bitmask" to select only the eighth </span>
+                               <span class="c1">//bit in our number (the one we are addressing this time through</span>
+  <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">;</span>          <span class="c1">//we move our number up one bit value so next time bit 7 will be</span>
+                               <span class="c1">//bit 8 and we will do our math on it</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">bit</span> <span class="o">==</span> <span class="mi">128</span><span class="p">){</span><span class="n">digitalWrite</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);}</span> <span class="c1">//if bit 8 is set then set our data pin high</span>
+  <span class="k">else</span><span class="p">{</span><span class="n">digitalWrite</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);}</span>            <span class="c1">//if bit 8 is unset then set the data pin low</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">clock</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>                <span class="c1">//the next three lines pulse the clock pin</span>
+  <span class="n">delay</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">clock</span><span class="p">,</span> <span class="n">LOW</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">digitalWrite</span><span class="p">(</span><span class="n">latch</span><span class="p">,</span> <span class="n">HIGH</span><span class="p">);</span>  <span class="c1">//pulls the latch high shifting our data into being displayed</span>
+<span class="p">}</span>
+
+
+<span class="c1">//These are used in the bitwise math that we use to change individual LEDs</span>
+<span class="c1">//For more details http://en.wikipedia.org/wiki/Bitwise_operation</span>
+<span class="kt">int</span> <span class="n">bits</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">B00000001</span><span class="p">,</span> <span class="n">B00000010</span><span class="p">,</span> <span class="n">B00000100</span><span class="p">,</span> <span class="n">B00001000</span><span class="p">,</span> <span class="n">B00010000</span><span class="p">,</span> <span class="n">B00100000</span><span class="p">,</span> <span class="n">B01000000</span><span class="p">,</span> <span class="n">B10000000</span><span class="p">};</span>
+<span class="kt">int</span> <span class="n">masks</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="n">B11111110</span><span class="p">,</span> <span class="n">B11111101</span><span class="p">,</span> <span class="n">B11111011</span><span class="p">,</span> <span class="n">B11110111</span><span class="p">,</span> <span class="n">B11101111</span><span class="p">,</span> <span class="n">B11011111</span><span class="p">,</span> <span class="n">B10111111</span><span class="p">,</span> <span class="n">B01111111</span><span class="p">};</span>
+<span class="cm">/*</span>
+<span class="cm"> * changeLED(int led, int state) - changes an individual LED </span>
+<span class="cm"> * LEDs are 0 to 7 and state is either 0 - OFF or 1 - ON</span>
+<span class="cm"> */</span>
+ <span class="kt">void</span> <span class="nf">changeLED</span><span class="p">(</span><span class="kt">int</span> <span class="n">led</span><span class="p">,</span> <span class="kt">int</span> <span class="n">state</span><span class="p">){</span>
+   <span class="n">ledState</span> <span class="o">=</span> <span class="n">ledState</span> <span class="o">&amp;</span> <span class="n">masks</span><span class="p">[</span><span class="n">led</span><span class="p">];</span>  <span class="c1">//clears ledState of the bit we are addressing</span>
+   <span class="k">if</span><span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">ON</span><span class="p">){</span><span class="n">ledState</span> <span class="o">=</span> <span class="n">ledState</span> <span class="o">|</span> <span class="n">bits</span><span class="p">[</span><span class="n">led</span><span class="p">];}</span> <span class="c1">//if the bit is on we will add it to ledState</span>
+   <span class="n">updateLEDs</span><span class="p">(</span><span class="n">ledState</span><span class="p">);</span>              <span class="c1">//send the new LED state to the shift register</span>
+ <span class="p">}</span>
+</pre></div>
+
+<p>Here I have changed to code to turn the LEDs into a 1-dimensional Conway's Game of Life with simplified rules (we are pretending that the lights are in a single-file rather than a matrix of 2 by 4): </p>
+
+<pre><code>1. If one (and only one) of your neighbors is ON, turn ON.
+2. Else turn OFF
+</code></pre>
+
+<p>Conway's Life is a very interesting problem of mathematics and delves into questions of chaos, complexity theory, etc. This implamentation, while very small, has some surprisingly interesting results!</p>
       </section>
     </div>
 

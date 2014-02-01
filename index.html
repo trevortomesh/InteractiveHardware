@@ -201,7 +201,7 @@ would suggest). </p>
 
 <p><img src="https://raw.github.com/trevortomesh/InteractiveHardware/fab20d3b0d0583027e5e4cb0d14532252c6e9780/assignments/a3/20140130_222729.jpg" alt=""></p>
 
-<p>Not too much interesting here. The code steps the servo through 180 degrees in one direction and then returns. At first I could not think of much interesting to do with this that would not suck up my entire week and get me in trouble with the Missus for not feeding the dog (I have an adorable chihuahua who would not look quite so adorable emaciated). However, I thought back to a project that I did as an undergraduate where I drove a physical pendulum with the oscillating signal from a simulated <a href="http://adsabs.harvard.edu/abs/2010APS..MAR.K1013T">squid-giant axon</a> (the result of which will forever be pejoratively known as "robo-squid" at the University of Wisconsin - River Falls).</p>
+<p>Not too much interesting here. The code steps the servo through 180 degrees in one direction and then returns. However, I thought back to a project that I did as an undergraduate where I drove a physical pendulum with the oscillating signal from a simulated <a href="http://adsabs.harvard.edu/abs/2010APS..MAR.K1013T">squid-giant axon</a> (the result of which will forever be pejoratively known as "robo-squid" at the University of Wisconsin - River Falls) -- which provided a it of inspiration.</p>
 
 <p>Anyhow, I decided that now might be a good time to, perhaps, re-visit the idea. The original "robosquid" code was written in python, so I decided to get my hands dirty with some python-serial communication. The resulting code: </p>
 
@@ -278,8 +278,9 @@ would suggest). </p>
 
 <p>In a nutshell, given the user input of 'H' or 'L' the arduino will respond by either speeding up or slowing down. This is accomplished simply by changing the value of the delay (hence the variable <em>del</em>). This is very interesting because it allows for the servo to be controlled by python code running on the computer. There are a number of interesting applications for this (the resurrection of robosquid being one) including the ability to interact with the Blender Game Engine -- which uses Python as a scripting language. </p>
 
-<p><strong><em>Part 3: Shift Register</em></strong>
-<a href="http://oomlout.com/a/products/ardx/circ-05/">CIRC-5</a> involved using a shift register to run a set of 8 LED's off of just three pins.</p>
+<p><strong><em>Part 3: Shift Register</em></strong></p>
+
+<p><a href="http://oomlout.com/a/products/ardx/circ-05/">CIRC-5</a> involved using a shift register to run a set of 8 LED's off of just three pins.</p>
 
 <p>The set-up:
 <img src="https://raw.github.com/trevortomesh/InteractiveHardware/gh-pages/assignments/a3/20140131_004956.jpg" alt=""></p>

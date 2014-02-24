@@ -44,62 +44,6 @@
 If you <strong>do</strong> find anything here interesting and want to copy it, I'd appreciate some attribution,
 but, hey, <a href="hotlinemiami.com">it's not like I am going to come after you with a baseball-bat wearing a chicken mask or something.</a></p>
 
-<h3>
-<a name="assignment-4-shift-registers-again-bootloaders-multiplexer-and-ir-communication-sort-of" class="anchor" href="#assignment-4-shift-registers-again-bootloaders-multiplexer-and-ir-communication-sort-of"><span class="octicon octicon-link"></span></a>Assignment 4: Shift Registers (again), Bootloaders, Multiplexer and IR-Communication (sort of)</h3>
-
-<p>This lab was a huge pain for a number of reasons: 
-a) I forgot to get a second shift-register -- and had to hunt some down. 
-b) Some of the instructions on tutorials I found were not particularly clear. 
-c) Broken (?) parts. 
-d) Uncooperative software</p>
-
-<p>I thought that I would bet ambitious with this assignment -- of course, that only ever leads to not actually getting the assignment done -- but, c'est la vie!</p>
-
-<p><strong><em>Part 1: Chained Shift-Registers</em></strong>
-Okay, this first part was my bad. I totally spaced on getting a second shift-register and regretted it. Once I finally procured one -- it went unexpectedly smoothly.        </p>
-
-<p><img src="http://farm8.staticflickr.com/7402/12686578973_7e846e713b.jpg" alt="Good GOD! WHAT HAVE I DONE?!?!"></p>
-
-<p>This set-up makes use of two TI-SN74HC595N's and a very simple daisy-chain method (which I do not have time to draw-up a schematic for at the moment). </p>
-
-<p>With this set-up I shamelessly used the shift-out method provided by the arduino core library -- because re-writing a library by hand is directly against my core beliefs (<a href="http://en.wikipedia.org/wiki/Missionary_Church_of_Kopimism">Kopimism</a>, if you must know). That and I am a) incredibly lazy and b) have no time. </p>
-
-<p>However, I was able to come up with some fun patterns: 
-<img src="http://farm4.staticflickr.com/3745/12686548773_c287ac6b9b.jpg" alt=""></p>
-
-<p>The standard "binary counter" (this time with more bits!)</p>
-
-<p><img src="http://farm4.staticflickr.com/3802/12686982104_7df7503039.jpg" alt=""></p>
-
-<p>And, of course, the obligatory "Cylon" pattern -- not quite as interesting, but you 
-get the idea. </p>
-
-<p><strong><em>Part 2: Flashing the Boot-loader</em></strong>
-To be honest -- I hated doing this. I was worried that I'd brick my board. But I followed the directions on <a href="http://arduino.cc/en/Tutorial/ArduinoISP#.Uwf-2niZi1E">The Arduino website</a> and it worked out just fine. </p>
-
-<p><img src="http://farm3.staticflickr.com/2872/12686739623_669fb05855.jpg" alt=""></p>
-
-<p>Here's an awful picture of my set-up. The link above provides the vague instruction "On the Arduino Uno, you'll need to connect a 10 uF capacitor between reset and ground (after uploading the ArduinoISP sketch)." </p>
-
-<p>Since I am using two Uno's, do I need to connect both to a 10uF capacitor? I wanted to be sure -- so I decided to hunt someone down for advice on #arduino on freenode. Of course, this question was met with sarcastic remarks about how I should use ISP, etc. etc. (typical) -- and I slunk away with a bruised ego and just guessed. Sigh.</p>
-
-<p>Now, despite this process being messy and potentially fatal -- there is good reason to do it. Bootloaders can become corrupted, out-dated, or even not-wanted. Furthermore, you can flash the bootloader with this method to make the arduino connect as a keyboard or some other USB HID. </p>
-
-<p>The due and leonardo (and micro) have this USB HID capability built directly in -- all the user needs to do is to import the mouse and keyboard library. </p>
-
-<p><strong><em>Part 3: Multiplexer</em></strong></p>
-
-<p>Part 3 turned out to be a huge disappointment. My set-up: 
-<img src="http://farm8.staticflickr.com/7338/12689007934_bc3eb3e7cf.jpg" alt=""></p>
-
-<p>I was very excited about this part of the assignment as there are so many things that you can do with these little chips. I hooked it up according to the spec. sheet (and made sure to plug the E-bar pin to ground -- as this chip is active when E-bar is low) -- but, alas no output. I tried switching it and reading values in instead, but the value would constantly oscillate no matter what configuration the pins were in. </p>
-
-<p>I therefore, had to conclude that either a) I have no idea what I am doing or b) There is a fault in the multiplexer. </p>
-
-<p>I've ordered a stack of multiplexers, but they've not yet showed up and so I am at a loss. :-/ </p>
-
-<p><strong><em>Part 4: LED Communication</em></strong></p>
-
 <hr><h3>
 <a name="assignment-3-doin-stuff-with-motors-and-servos--shift-registers" class="anchor" href="#assignment-3-doin-stuff-with-motors-and-servos--shift-registers"><span class="octicon octicon-link"></span></a>Assignment 3: Doin' stuff with motors and servos / shift registers</h3>
 
@@ -619,6 +563,63 @@ would suggest). </p>
 </code></pre>
 
 <p>Conway's Life is a very interesting problem of mathematics and delves into questions of chaos, complexity theory, etc. This implamentation, while very small, has some surprisingly interesting results!</p>
+
+<h3>
+<a name="assignment-4-shift-registers-again-bootloaders-multiplexer-and-ir-communication-sort-of" class="anchor" href="#assignment-4-shift-registers-again-bootloaders-multiplexer-and-ir-communication-sort-of"><span class="octicon octicon-link"></span></a>Assignment 4: Shift Registers (again), Bootloaders, Multiplexer and IR-Communication (sort of)</h3>
+
+<p>This lab was a huge pain for a number of reasons: 
+a) I forgot to get a second shift-register -- and had to hunt some down. 
+b) Some of the instructions on tutorials I found were not particularly clear. 
+c) Broken (?) parts. 
+d) Uncooperative software</p>
+
+<p>I thought that I would bet ambitious with this assignment -- of course, that only ever leads to not actually getting the assignment done -- but, c'est la vie!</p>
+
+<p><strong><em>Part 1: Chained Shift-Registers</em></strong>
+Okay, this first part was my bad. I totally spaced on getting a second shift-register and regretted it. Once I finally procured one -- it went unexpectedly smoothly.        </p>
+
+<p><img src="http://farm8.staticflickr.com/7402/12686578973_7e846e713b.jpg" alt="Good GOD! WHAT HAVE I DONE?!?!"></p>
+
+<p>This set-up makes use of two TI-SN74HC595N's and a very simple daisy-chain method (which I do not have time to draw-up a schematic for at the moment). </p>
+
+<p>With this set-up I shamelessly used the shift-out method provided by the arduino core library -- because re-writing a library by hand is directly against my core beliefs (<a href="http://en.wikipedia.org/wiki/Missionary_Church_of_Kopimism">Kopimism</a>, if you must know). That and I am a) incredibly lazy and b) have no time. </p>
+
+<p>However, I was able to come up with some fun patterns: 
+<img src="http://farm4.staticflickr.com/3745/12686548773_c287ac6b9b.jpg" alt=""></p>
+
+<p>The standard "binary counter" (this time with more bits!)</p>
+
+<p><img src="http://farm4.staticflickr.com/3802/12686982104_7df7503039.jpg" alt=""></p>
+
+<p>And, of course, the obligatory "Cylon" pattern -- not quite as interesting, but you 
+get the idea. </p>
+
+<p><strong><em>Part 2: Flashing the Boot-loader</em></strong>
+To be honest -- I hated doing this. I was worried that I'd brick my board. But I followed the directions on <a href="http://arduino.cc/en/Tutorial/ArduinoISP#.Uwf-2niZi1E">The Arduino website</a> and it worked out just fine. </p>
+
+<p><img src="http://farm3.staticflickr.com/2872/12686739623_669fb05855.jpg" alt=""></p>
+
+<p>Here's an awful picture of my set-up. The link above provides the vague instruction "On the Arduino Uno, you'll need to connect a 10 uF capacitor between reset and ground (after uploading the ArduinoISP sketch)." </p>
+
+<p>Since I am using two Uno's, do I need to connect both to a 10uF capacitor? I wanted to be sure -- so I decided to hunt someone down for advice on #arduino on freenode. Of course, this question was met with sarcastic remarks about how I should use ISP, etc. etc. (typical) -- and I slunk away with a bruised ego and just guessed. Sigh.</p>
+
+<p>Now, despite this process being messy and potentially fatal -- there is good reason to do it. Bootloaders can become corrupted, out-dated, or even not-wanted. Furthermore, you can flash the bootloader with this method to make the arduino connect as a keyboard or some other USB HID. </p>
+
+<p>The due and leonardo (and micro) have this USB HID capability built directly in -- all the user needs to do is to import the mouse and keyboard library. </p>
+
+<p><strong><em>Part 3: Multiplexer</em></strong></p>
+
+<p>Part 3 turned out to be a huge disappointment. My set-up: 
+<img src="http://farm8.staticflickr.com/7338/12689007934_bc3eb3e7cf.jpg" alt=""></p>
+
+<p>I was very excited about this part of the assignment as there are so many things that you can do with these little chips. I hooked it up according to the spec. sheet (and made sure to plug the E-bar pin to ground -- as this chip is active when E-bar is low) -- but, alas no output. I tried switching it and reading values in instead, but the value would constantly oscillate no matter what configuration the pins were in. </p>
+
+<p>I therefore, had to conclude that either a) I have no idea what I am doing or b) There is a fault in the multiplexer. </p>
+
+<p>I've ordered a stack of multiplexers, but they've not yet showed up and so I am at a loss. :-/ </p>
+
+<p><strong><em>Part 4: LED Communication</em></strong>
+Visible light communication is a very interesting </p>
       </section>
     </div>
 

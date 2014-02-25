@@ -630,8 +630,41 @@ To be honest -- I hated doing this. I was worried that I'd brick my board. But I
 
 <p>The launchpad and the arduino are connected to separate computers. </p>
 
-<p>Running a "blink" program with a delay of 1000 between each "high" and "low" cycle and reading at a rate of 1,000 samples / second, and plotting those values received against time, I produced the following plot: 
-<img src="https://lh5.googleusercontent.com/-6cu3dn-Y18E/UwwzNo0yYwI/AAAAAAAAAUI/_5BOdzn4QpE/s600/chart_1.png" alt=""></p>
+<p>Running a "blink" program with a delay of 1000 between each "high" and "low" cycle and reading at a rate of 1,000 samples / second, and plotting those values received against time, I produced the following plot: </p>
+
+<p><img src="https://lh5.googleusercontent.com/-6cu3dn-Y18E/UwwzNo0yYwI/AAAAAAAAAUI/_5BOdzn4QpE/s600/chart_1.png" alt=""></p>
+
+<p>Here we see very clearly peaks and valleys -- our LED switching "on" and "off". These are our "1's" and "0's". </p>
+
+<p>I decided that the encoding scheme I'd use would be simple ASCII to Binary:</p>
+
+<p><code>hi --&gt; 0110100001101001</code></p>
+
+<p>And the resulting code: </p>
+
+<pre><code>int message[] = {0,1,1,0,1,0,0,0,0,1,1,0,1,0,0,1}; 
+void setup() {                
+  pinMode(3, OUTPUT);     
+}
+
+void loop() {
+
+  int size = sizeof(message);
+
+  for(int i = 0; i &lt; size; i++){
+    if(message[i] == 1){
+  digitalWrite(3, HIGH);   
+  delay(100);              
+    }
+
+    if(message[i] == 0){
+  digitalWrite(3, LOW);    
+  delay(100);            
+    }
+  }
+}
+
+</code></pre>
       </section>
     </div>
 
